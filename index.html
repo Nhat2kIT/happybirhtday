@@ -648,7 +648,7 @@
   <!-- Music -->
   <button class="music-btn" id="musicBtn" title="Bật / Tắt nhạc">🎵</button>
   <audio id="bgMusic" loop preload="auto">
-    <source src="https://drive.google.com/uc?export=download&id=1Te7Mk839IY_uyhM19cM4aAocSr_ntw2h" type="audio/mpeg">
+    <source src="music.mp3" type="audio/mpeg">
   </audio>
 
   <div class="container">
@@ -999,30 +999,30 @@ let giftStep = 0;
     });
 
     // ====================== MUSIC ======================
-    const MUSIC_FILE_ID = '1Te7Mk839IY_uyhM19cM4aAocSr_ntw2h';
     const musicBtn = document.getElementById('musicBtn');
     const bgMusic = document.getElementById('bgMusic');
-    const musicSource = bgMusic.querySelector('source');
     let isPlaying = false;
 
-    musicSource.src = `https://drive.google.com/uc?export=download&id=${MUSIC_FILE_ID}`;
     bgMusic.load();
 
-    musicBtn.addEventListener('click', () => {
+    musicBtn.addEventListener('click', async () => {
       if (isPlaying) {
         bgMusic.pause();
         musicBtn.textContent = '🎵';
         musicBtn.classList.remove('playing');
+        isPlaying = false;
       } else {
-        bgMusic.play().catch(() => {
+        try {
+          await bgMusic.play();
+          isPlaying = true;
+          musicBtn.textContent = '🎶';
+          musicBtn.classList.add('playing');
+        } catch (error) {
           musicBtn.textContent = '🎵';
           musicBtn.classList.remove('playing');
           alert('Không thể phát nhạc. Hãy kiểm tra file trên Google Drive có được chia sẻ công khai không.');
-        });
-        musicBtn.textContent = '🎶';
-        musicBtn.classList.add('playing');
+        }
       }
-      isPlaying = !isPlaying;
     });
 
     // ====================== FALLING PETALS + SPARKLES ======================
