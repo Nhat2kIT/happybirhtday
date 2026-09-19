@@ -1028,6 +1028,17 @@ let giftStep = 0;
     if (!bgMusic.paused) setMusicState(true);
     startMusic();
 
+    function resumeMusicOnInteraction() {
+      if (bgMusic.paused) startMusic();
+      document.removeEventListener('pointerdown', resumeMusicOnInteraction);
+      document.removeEventListener('keydown', resumeMusicOnInteraction);
+      document.removeEventListener('touchstart', resumeMusicOnInteraction);
+    }
+
+    document.addEventListener('pointerdown', resumeMusicOnInteraction, { once: true });
+    document.addEventListener('keydown', resumeMusicOnInteraction, { once: true });
+    document.addEventListener('touchstart', resumeMusicOnInteraction, { once: true });
+
     musicBtn.addEventListener('click', async () => {
       if (!bgMusic.paused) {
         bgMusic.pause();
