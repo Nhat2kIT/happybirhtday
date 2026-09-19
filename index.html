@@ -647,7 +647,7 @@
 
   <!-- Music -->
   <button class="music-btn" id="musicBtn" title="Bật / Tắt nhạc">🎵</button>
-  <audio id="bgMusic" loop preload="auto">
+  <audio id="bgMusic" autoplay loop preload="auto">
     <source src="music.mp3" type="audio/mpeg">
   </audio>
 
@@ -1004,24 +1004,36 @@ let giftStep = 0;
     let isPlaying = false;
 
     bgMusic.load();
+    bgMusic.addEventListener('playing', () => setMusicState(true));
+    bgMusic.addEventListener('pause', () => setMusicState(false));
+
+    function setMusicState(playing) {
+      isPlaying = playing;
+      musicBtn.textContent = playing ? '🎶' : '🎵';
+      musicBtn.classList.toggle('playing', playing);
+    }
+
+    async function startMusic(showError = false) {
+      try {
+        await bgMusic.play();
+        setMusicState(true);
+      } catch (error) {
+        setMusicState(!bgMusic.paused);
+        if (showError) {
+          alert('Trình duyệt đã chặn tự phát nhạc. Hãy bấm nút 🎵 để phát nhạc.');
+        }
+      }
+    }
+
+    if (!bgMusic.paused) setMusicState(true);
+    startMusic();
 
     musicBtn.addEventListener('click', async () => {
-      if (isPlaying) {
+      if (!bgMusic.paused) {
         bgMusic.pause();
-        musicBtn.textContent = '🎵';
-        musicBtn.classList.remove('playing');
-        isPlaying = false;
+        setMusicState(false);
       } else {
-        try {
-          await bgMusic.play();
-          isPlaying = true;
-          musicBtn.textContent = '🎶';
-          musicBtn.classList.add('playing');
-        } catch (error) {
-          musicBtn.textContent = '🎵';
-          musicBtn.classList.remove('playing');
-          alert('Không thể phát nhạc. Hãy kiểm tra file trên Google Drive có được chia sẻ công khai không.');
-        }
+        await startMusic(true);
       }
     });
 
